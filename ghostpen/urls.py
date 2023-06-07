@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
-from ghostpenapi.views import login_user, register_user, GhostView, ContactView, ToneView, GhostUserView, ProfileView
+from ghostpenapi.views import login_user, register_user, GhostView, ContactView, ToneView, GhostUserView, ProfileView, TagView, LetterView
 
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -27,6 +27,8 @@ router.register(r'contacts', ContactView , 'contact')
 router.register(r'tones', ToneView , 'tone')
 router.register(r'ghostusers', GhostUserView , 'ghostuser')
 router.register(r'profile', ProfileView, 'profile')
+router.register(r'tags', TagView, 'tag')
+router.register(r'letters', LetterView, 'letter')
 
 urlpatterns = [
     path('register', register_user),

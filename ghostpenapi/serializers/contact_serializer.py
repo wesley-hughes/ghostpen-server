@@ -1,14 +1,16 @@
 from rest_framework import serializers
 from ghostpenapi.models import Contact
-from .ghostuser_serializer import GhostUserSerializer
+from .tag_serializer import TagSerializer
 
 class ContactSerializer(serializers.ModelSerializer):
-    ghostuser = GhostUserSerializer(many=False)
+    tags = TagSerializer(many=True, read_only=True)
     class Meta:
         model = Contact
-        fields = ('id', 'ghostuser', 'first_name', 'last_name', 'bio')
+        fields = ('id', 'ghostuser', 'first_name', 'last_name', 'tags', 'bio')
 
 class CreateContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields =('id', 'first_name', 'last_name', 'bio')
+        fields = ('id', 'first_name', 'last_name', 'tags', 'bio')
+
+
