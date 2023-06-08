@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from ghostpenapi.models import Letter
-from ghostpenapi.serializers import LetterSerializer
+from ghostpenapi.models import Letter, Contact, GhostUser
+from ghostpenapi.serializers import LetterSerializer, CreateLetterSerializer
 
 class LetterView(ViewSet):
     def retrieve(self, request, pk):
@@ -22,18 +22,24 @@ class LetterView(ViewSet):
     
     def create(self, request):
         """Create a new letter."""
-        serializer = LetterSerializer(data=request.data)
+        serializer = CreateLetterSerializer(data=request.data)
+        contact= Contact.objects.get(pk=request.data['contact'])
+        ghostuser = GhostUser.objects.get(user=request.auth.user)
         serializer.is_valid(raise_exception=True)
-        serializer.save(contact=request.data['contact']) 
+        serializer.save(contact=contact, ghostuser=ghostuser) 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk):
         """Update an existing letter."""
         letter = Letter.objects.get(pk=pk)
-        serializer = LetterSerializer(letter, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(contact=request.data['contact'])
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        letter.ghostuser = GhostUser.objects.get(user=request.auth.user.id)
+        letter.letter_body = request.data["letter_body"]
+        contact_id = request.data["contact"]["id"]
+        contact = Contact.objects.get(pk=contact_id) 
+        letter.contact = contact 
+        letter.date = request.data["date"]
+        letter.save()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)
     
     def destroy(self, request, pk):
         """Delete a letter."""

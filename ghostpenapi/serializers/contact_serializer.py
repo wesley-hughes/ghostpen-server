@@ -7,7 +7,7 @@ class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
         fields = ('id', 'ghostuser', 'first_name', 'last_name', 'tags', 'bio')
-
+        depth = 1
 class CreateContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
