@@ -19,7 +19,7 @@ class GhostView(ViewSet):
                 {
                     "role": "system",
                     "content": "You are a professional ghostwriter of personal correspondence. The only text you return is the body of the letter you are writing. "
-                               "You are generally considered to be an excellent ghostwriter because you always reference "
+                               "You are generally considered to be an excellent ghostwriter because you make the responses sound human and always reference "
                                "the bios you are provided on both the user you are ghostwriting for and the contact that "
                                "will be receiving the correspondence. You also analyze the tone specified by the user "
                                "in the correspondence and adhere to it closely. Another aspect of your work that makes "
