@@ -19,8 +19,14 @@ class ContactView(ViewSet):
     def list(self, request):
         """Retrieve a list of all contacts."""
         contacts = Contact.objects.all()
+        user = GhostUser.objects.get(user=request.auth.user)
+        ghostuser = request.query_params.get('user', None)
+
+        if user is not None:
+            contacts = contacts.filter(ghostuser=ghostuser)
+
         serializer = ContactSerializer(contacts, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def create(self, request):
         """Create a new contact."""
