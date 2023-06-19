@@ -34,8 +34,8 @@ class ContactView(ViewSet):
         all_tags = []
         tags = request.data["tags"]
         for tag in tags:
-            post_tag = Tag.objects.get(pk=tag)
-            all_tags.append(post_tag)
+            contact_tag = Tag.objects.get(pk=tag)
+            all_tags.append(contact_tag)
         serializer = CreateContactSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(ghostuser=ghostuser, tags=all_tags)
@@ -51,8 +51,8 @@ class ContactView(ViewSet):
         all_tags = []
         tags = request.data["tags"]
         for tag in tags:
-            post_tag = Tag.objects.get(pk=tag)
-            all_tags.append(post_tag)
+            contact_tag = Tag.objects.get(pk=tag)
+            all_tags.append(contact_tag)
         contact.tags.set(all_tags)
         contact.save()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
