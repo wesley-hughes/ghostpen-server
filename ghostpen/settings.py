@@ -57,7 +57,9 @@ REST_FRAMEWORK = {
 # THIS IS NEW
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    'https://ghostpen-client-9709e86dbb57.herokuapp.com/',
+    'http://ghostpen.live/'
 )
 
 # UPDATE THIS
