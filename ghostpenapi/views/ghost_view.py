@@ -1,11 +1,10 @@
 from django.http import JsonResponse
-from dotenv import load_dotenv
+
 from openai import ChatCompletion
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 import os
 
-load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 class GhostView(ViewSet):
