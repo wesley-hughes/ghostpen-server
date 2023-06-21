@@ -17,11 +17,10 @@ class LetterView(ViewSet):
     def list(self, request):
         """Retrieve a list of all letters."""
         letters = Letter.objects.all()
-        user = GhostUser.objects.get(user=request.auth.user)
-        ghostuser = request.query_params.get('user', None)
+        ghostuser = request.query_params.get('myletters', None)
 
-        if user is not None:
-            letters = letters.filter(ghostuser=ghostuser)
+        if ghostuser is not None:
+            letters = letters.filter(ghostuser__user=request.auth.user)
 
         serializer = LetterSerializer(letters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

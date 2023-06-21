@@ -6,4 +6,4 @@ class GhostUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = GhostUser
         fields = ('id', 'first_name', 'last_name', 'bio')
-        depth = 1
+        
