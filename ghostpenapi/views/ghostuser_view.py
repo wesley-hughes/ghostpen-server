@@ -17,6 +17,7 @@ class GhostUserView(ViewSet):
     def update(self, request, pk):
         """Update a user profile."""
         ghostuser = GhostUser.objects.get(pk=pk)
+        ghostuser.user = request.auth.user
         serializer = GhostUserSerializer(ghostuser, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

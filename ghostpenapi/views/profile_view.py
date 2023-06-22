@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from ghostpenapi.serializers import UserSerializer
+from ghostpenapi.models import GhostUser
 
 class ProfileView(ViewSet):
     @action(methods=['GET'], detail=False, url_path="my-profile")
@@ -18,13 +19,12 @@ class ProfileView(ViewSet):
     @action(methods=['PUT'], detail=False)
     def edit(self, request):
         """Edit the current user's profile"""
-        user = request.auth.user
-        user.username = request.data['username']
+        user = User.objects.get(pk=request.user.pk)
+        ghostuser = GhostUser.objects.get(user=user)
         user.first_name = request.data['first_name']
         user.last_name = request.data['last_name']
-        user.bio = request.data['bio']
-        if request.data.get('password', None):
-            user.set_password(request.data['password'])
+        ghostuser.bio = request.data['bio']
         user.save()
+        ghostuser.save()
 
         return Response(None, status=status.HTTP_204_NO_CONTENT)
