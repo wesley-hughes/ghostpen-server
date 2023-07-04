@@ -4,3 +4,4 @@ from .tone_serializer import ToneSerializer
 from .user_serializer import UserSerializer
 from .letter_serializer import LetterSerializer, CreateLetterSerializer
 from .tag_serializer import TagSerializer
+from .campaign_serializer import CampaignSerializer
