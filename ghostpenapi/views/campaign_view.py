@@ -1,8 +1,10 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from ghostpenapi.models import Campaign
-from ghostpenapi.serializers import CampaignSerializer
+from ghostpenapi.models import Campaign, Contact, GhostUser
+from ghostpenapi.serializers import CampaignSerializer, CreateCampaignSerializer
+from rest_framework.decorators import action
+
 
 class CampaignView(ViewSet):
     def retrieve(self, request, pk):
@@ -22,9 +24,9 @@ class CampaignView(ViewSet):
     
     def create(self, request):
         """Create a new campaign."""
-        serializer = CampaignSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        ghost_user = GhostUser.objects.get(user=request.auth.user)
+        new_campaign = Campaign.objects.create(ghostuser=ghost_user, label=request.data["label"], description=request.data["description"])
+        serializer = CampaignSerializer(new_campaign)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def update(self, request, pk):
@@ -40,3 +42,12 @@ class CampaignView(ViewSet):
         campaign = Campaign.objects.get(pk=pk)
         campaign.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(methods=['post'], detail=True)
+    def target(self, request, pk):
+        campaign = Campaign.objects.get(pk=pk)
+        contacts = request.data["contacts"]
+        for contact in contacts:
+            contactObj= Contact.objects.get(pk=contact)
+            campaign.contacts.add(contactObj.id)
+        return Response({'message': 'Contacts added'}, status=status.HTTP_201_CREATED)

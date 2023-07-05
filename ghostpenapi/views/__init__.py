@@ -6,3 +6,4 @@ from .ghostuser_view import GhostUserView
 from .profile_view import ProfileView
 from .tag_view import TagView
 from .letter_view import LetterView
+from .campaign_view import CampaignView
