@@ -5,6 +5,12 @@ from ghostpenapi.models import GhostUser
 from ghostpenapi.serializers import GhostUserSerializer
 
 class GhostUserView(ViewSet):
+    def list(self, request):
+        """Retrieve a list of all ghostusers."""
+        ghostusers = GhostUser.objects.all()
+        serializer = GhostUserSerializer(ghostusers, many=True)
+        return Response(serializer.data)
+    
     def retrieve(self, request, pk):
         """Retrieve a specific tone by primary key."""
         try:
