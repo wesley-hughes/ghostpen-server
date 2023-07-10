@@ -45,6 +45,7 @@ class CampaignView(ViewSet):
     
     @action(methods=['post'], detail=True)
     def target(self, request, pk):
+        '''add conacts to campaign'''
         campaign = Campaign.objects.get(pk=pk)
         contacts = request.data["contacts"]
         for contact in contacts:
