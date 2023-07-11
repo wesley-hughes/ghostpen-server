@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from ghostpenapi.models import Letter, Contact, GhostUser
+from ghostpenapi.models import Letter, Contact, GhostUser, Campaign
 from ghostpenapi.serializers import LetterSerializer, CreateLetterSerializer
 
 class LetterView(ViewSet):
@@ -31,8 +31,9 @@ class LetterView(ViewSet):
         serializer = CreateLetterSerializer(data=request.data)
         contact= Contact.objects.get(pk=request.data['contact'])
         ghostuser = GhostUser.objects.get(user=request.auth.user)
+        campaign = Campaign.objects.get(pk=request.data["campaign"])
         serializer.is_valid(raise_exception=True)
-        serializer.save(contact=contact, ghostuser=ghostuser) 
+        serializer.save(contact=contact, ghostuser=ghostuser, campaign=campaign)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk):
