@@ -49,6 +49,6 @@ class CampaignView(ViewSet):
         campaign = Campaign.objects.get(pk=pk)
         contacts = request.data["contacts"]
         for contact in contacts:
-            contactObj= Contact.objects.get(pk=contact)
+            contactObj = Contact.objects.get(pk=contact)
             campaign.contacts.add(contactObj.id)
         return Response({'message': 'Contacts added'}, status=status.HTTP_201_CREATED)
