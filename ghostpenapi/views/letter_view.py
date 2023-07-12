@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
-from rest_framework import status
-from ghostpenapi.models import Letter, Contact, GhostUser
+from rest_framework import status, filters
+from ghostpenapi.models import Letter, Contact, GhostUser, Campaign
 from ghostpenapi.serializers import LetterSerializer, CreateLetterSerializer
 
 class LetterView(ViewSet):
@@ -18,9 +18,12 @@ class LetterView(ViewSet):
         """Retrieve a list of all letters."""
         letters = Letter.objects.all()
         ghostuser = request.query_params.get('myletters', None)
+        contact_filter = request.query_params.get('contact', None)
 
         if ghostuser is not None:
             letters = letters.filter(ghostuser__user=request.auth.user)
+        if contact_filter is not None:
+            letters = letters.filter(contact__full_name__icontains=contact_filter)
 
         serializer = LetterSerializer(letters, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -30,9 +33,14 @@ class LetterView(ViewSet):
         """Create a new letter."""
         serializer = CreateLetterSerializer(data=request.data)
         contact= Contact.objects.get(pk=request.data['contact'])
-        ghostuser = GhostUser.objects.get(user=request.auth.user)
+        ghostuser= GhostUser.objects.get(user=request.auth.user)
+        
+        campaign= None
+        if 'campaign' in request.data:
+            campaign = Campaign.objects.get(pk=request.data["campaign"])
+        
         serializer.is_valid(raise_exception=True)
-        serializer.save(contact=contact, ghostuser=ghostuser) 
+        serializer.save(contact=contact, ghostuser=ghostuser, campaign=campaign)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk):
