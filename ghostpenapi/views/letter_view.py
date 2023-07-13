@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
-from rest_framework import status, filters
+from django.db.models import Q
+from rest_framework import status
 from ghostpenapi.models import Letter, Contact, GhostUser, Campaign
 from ghostpenapi.serializers import LetterSerializer, CreateLetterSerializer
 
@@ -16,18 +17,22 @@ class LetterView(ViewSet):
         
     def list(self, request):
         """Retrieve a list of all letters."""
-        letters = Letter.objects.all()
-        ghostuser = request.query_params.get('myletters', None)
+        ghostuser = GhostUser.objects.get(user=request.auth.user)
         contact_filter = request.query_params.get('contact', None)
+        campaign = request.query_params.get('campaign', None)
 
-        if ghostuser is not None:
-            letters = letters.filter(ghostuser__user=request.auth.user)
+        filters = {}
         if contact_filter is not None:
-            letters = letters.filter(contact__full_name__icontains=contact_filter)
+            filters['contact__first_name__icontains']= contact_filter
+        if campaign is not None:
+            filters['campaign']= campaign
 
-        serializer = LetterSerializer(letters, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+        try:
+            letters = Letter.objects.filter(Q(**filters), ghostuser=ghostuser)
+            serializer = LetterSerializer(letters, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Letter.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
     
     def create(self, request):
         """Create a new letter."""
