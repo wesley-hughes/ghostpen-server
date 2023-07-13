@@ -19,7 +19,7 @@ class ContactView(ViewSet):
     def list(self, request):
         """Retrieve a list of all contacts."""
         contacts = Contact.objects.all()
-        ghostuser = request.query_params.get('mycontacts', None)
+        ghostuser = GhostUser.objects.get(user=request.auth.user)
 
         if ghostuser is not None:
             contacts = contacts.filter(ghostuser__user=request.auth.user)
