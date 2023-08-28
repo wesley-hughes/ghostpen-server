@@ -2,7 +2,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import status
 from ghostpenapi.models import Campaign, Contact, GhostUser
-from ghostpenapi.serializers import CampaignSerializer, CreateCampaignSerializer
+from ghostpenapi.serializers import CampaignSerializer
 from rest_framework.decorators import action
 
 
@@ -31,12 +31,14 @@ class CampaignView(ViewSet):
     
     def update(self, request, pk):
         """Update an existing campaign."""
+        ghost_user = GhostUser.objects.get(user=request.auth.user)
         campaign = Campaign.objects.get(pk=pk)
-        serializer = CampaignSerializer(campaign, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+        campaign.ghostuser=ghost_user
+        campaign.label= request.data["label"]
+        campaign.description= request.data["description"]
+        campaign.save()
+        return Response(None, status=status.HTTP_204_NO_CONTENT)  
+      
     def destroy(self, request, pk):
         """Delete a campaign."""
         campaign = Campaign.objects.get(pk=pk)
@@ -49,6 +51,5 @@ class CampaignView(ViewSet):
         campaign = Campaign.objects.get(pk=pk)
         contacts = request.data["contacts"]
         for contact in contacts:
-            contactObj = Contact.objects.get(pk=contact)
-            campaign.contacts.add(contactObj.id)
+            campaign.contacts.add(contact)
         return Response({'message': 'Contacts added'}, status=status.HTTP_201_CREATED)
