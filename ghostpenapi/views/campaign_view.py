@@ -21,7 +21,7 @@ class CampaignView(ViewSet):
         campaigns = Campaign.objects.all()
         ghostuser = GhostUser.objects.get(user=request.auth.user)
         if ghostuser is not None:
-            contacts = contacts.filter(ghostuser__user=request.auth.user)
+            campaigns = campaigns.filter(ghostuser__user=request.auth.user)
         serializer = CampaignSerializer(campaigns, many=True)
         return Response(serializer.data)
     
