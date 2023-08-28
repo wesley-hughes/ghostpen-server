@@ -19,6 +19,9 @@ class CampaignView(ViewSet):
     def list(self, request):
         """Retrieve a list of all campaigns."""
         campaigns = Campaign.objects.all()
+        ghostuser = GhostUser.objects.get(user=request.auth.user)
+        if ghostuser is not None:
+            contacts = contacts.filter(ghostuser__user=request.auth.user)
         serializer = CampaignSerializer(campaigns, many=True)
         return Response(serializer.data)
     
