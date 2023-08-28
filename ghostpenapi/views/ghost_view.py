@@ -10,7 +10,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 class GhostView(ViewSet):
     def create(self, request):
-        user_input = request.data.get('user_input')
+        user_input = request.data['user_input']
 
         completion = ChatCompletion.create(
             api_key=openai_api_key,
